@@ -4,7 +4,7 @@
  *   name: Authentication
  *   description: Endpoints related to user authentication
  *
- * /api/auth/signup:
+ * /auth/signup:
  *   post:
  *     summary: Register a new user
  *     tags: [Authentication]
@@ -18,12 +18,19 @@
  *             required:
  *               - email
  *               - password
+ *               - confirmPassword
+ *               - firstName
+ *               - lastName
  *             properties:
  *               email:
  *                 type: string
  *                 format: email
  *                 example: user@example.com
  *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: "StrongPass123!"
+ *               confirmPassword:
  *                 type: string
  *                 format: password
  *                 example: "StrongPass123!"
