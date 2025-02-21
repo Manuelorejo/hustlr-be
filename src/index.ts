@@ -15,7 +15,7 @@ const port = process.env.PORT || 8000;
 const swaggerDefinition = {
   openapi: "3.0.0",
   info: {
-    title: "Zarttech API Documentation",
+    title: "Hustlr API Documentation",
     version: "1.0.0",
     description: "API documentation for Hustlr",
   },
