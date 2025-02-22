@@ -6,8 +6,12 @@ export default class AuthRepo {
     return await UserModel.findOne({ email }).exec();
   };
 
+  static findById = async (id: string): Promise<DocumentType<User> | null> => {
+    return await UserModel.findById(id).exec();
+  };
+
   static createUser = async (
-    user: Omit<User, "confirmPassword">,
+    user: Omit<User, "confirmPassword" | "setPassword">,
   ): Promise<DocumentType<User>> => {
     return await UserModel.create(user);
   };

@@ -35,14 +35,27 @@ export class User {
   @prop({ unique: true, required: true, lowercase: true, trim: true })
   email!: string;
 
-  async confirmPassword(this: DocumentType<User>, candidatePassword: string):Promise<boolean> {
+  async confirmPassword(this: DocumentType<User>, candidatePassword: string): Promise<boolean> {
     try {
-      return await argon2.verify(this.password, candidatePassword);
+      const isValid = await argon2.verify(this.password, candidatePassword);
+      console.log("Password verification:", { candidatePassword, storedPassword: this.password, isValid });
+      return isValid;
     } catch (error) {
       console.error("Password verification error:", error);
       return false;
     }
   }
+  
+
+  // async setPassword(this: DocumentType<User>, newPassword: string): Promise<void> {
+  //   console.log("Old password hash", this.password);
+  //   const newHashedPassword = await argon2.hash(newPassword);
+  //   console.log("New password hash", newHashedPassword);
+  //   this.password = newHashedPassword;
+  // }
+  
+  
+  
 }
 
 const UserModel = getModelForClass(User);

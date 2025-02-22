@@ -44,5 +44,40 @@ export const loginSchema = object({
   }),
 });
 
+export const passwordResetRequestSchema = object({
+  body: object({
+    email: string({
+      required_error: "Email is required",
+    }).email("Not a valid email"),
+  }),
+});
+
+export const passwordResetSchema = object({
+  body: object({
+    token: string({
+      required_error: "Reset token is required",
+    }),
+    password: string({
+      required_error: "New password is required",
+    })
+      .min(8, "Password must be at least 8 characters long")
+      .regex(
+        /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/,
+        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*)"
+      ),
+    confirmPassword: string({
+      required_error: "Confirm password is required",
+    }),
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  }),
+});
+
+
+export type PasswordResetRequestInput = TypeOf<typeof passwordResetRequestSchema>["body"];
+export type PasswordResetInput = TypeOf<typeof passwordResetSchema>["body"];
+
+
 export type SignUpInput = TypeOf<typeof signUpSchema>["body"];
 export type LoginInput = TypeOf<typeof loginSchema>["body"];
