@@ -138,3 +138,34 @@
  */
 
 
+
+/**
+ * @swagger
+ * /auth/logout:
+ *   post:
+ *     summary: Logout user
+ *     tags: [Authentication]
+ *     description: Invalidates the user's token by blacklisting it.
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Logout successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Logout successful"
+ *       400:
+ *         description: No token provided or already blacklisted
+ *       401:
+ *         description: Unauthorized - Token is blacklisted
+ *       500:
+ *         description: Internal server error
+ */
+
+
+

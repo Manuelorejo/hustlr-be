@@ -3,6 +3,7 @@ import AuthRepo from "./auth.repo";
 import APIResponse from "../../utils/response";
 import JWTRepo from "../../database/jwt.repo";
 import { SignUpInput, LoginInput } from "./auth.validation";
+import BlacklistRepo from "./blacklist/blacklist.repo";
 
 export default class AuthController {
   static signup = async (
@@ -75,6 +76,29 @@ export default class AuthController {
         "Login successful",
         200
       ).send(res);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  static logout = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+
+      if (!token) {
+        return APIResponse.error("No token provided", 400).send(res);
+      }
+
+      // Check if already blacklisted
+      const isBlacklisted = await BlacklistRepo.isTokenBlacklisted(token);
+      if (isBlacklisted) {
+        return APIResponse.error("Token already blacklisted", 400).send(res);
+      }
+
+      // Blacklist the token
+      await BlacklistRepo.blacklistToken(token);
+
+      return APIResponse.success(null, "Logout successful", 200).send(res);
     } catch (error) {
       next(error);
     }
