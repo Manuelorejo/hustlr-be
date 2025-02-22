@@ -35,7 +35,7 @@ export class User {
   @prop({ unique: true, required: true, lowercase: true, trim: true })
   email!: string;
 
-  async confirmPassword(this: DocumentType<User>, candidatePassword: string) {
+  async confirmPassword(this: DocumentType<User>, candidatePassword: string):Promise<boolean> {
     try {
       return await argon2.verify(this.password, candidatePassword);
     } catch (error) {
