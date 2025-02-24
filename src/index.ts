@@ -3,11 +3,12 @@ dotenv.config();
 import express, { Response } from "express";
 import swaggerJSDoc from "swagger-jsdoc";
 import * as swaggerUi from "swagger-ui-express";
-import cors from "cors";
 import morgan from "morgan";
 import connect from "./database/connection";
 import router from "./index.routes";
 import deserialize from "./middleware/deserializeUser";
+import cors from "cors";
+import corsOptions from "../config/cors"; 
 
 const app = express();
 
@@ -32,18 +33,8 @@ const options = {
 };
 const swaggerSpec = swaggerJSDoc(options);
 
-var corOptions = {
-  origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-  setHeaders: function (res: Response, path: string, stat: any) {
-    res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
-  },
-};
-
 app.use(express.json());
-app.use(cors(corOptions));
+app.options("*", cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("tiny"));
 app.disable("x-powered-by");
