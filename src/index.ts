@@ -8,6 +8,7 @@ import connect from "./database/connection";
 import router from "./index.routes";
 import deserialize from "./middleware/deserializeUser";
 import cors from "cors";
+import axios from "axios";
 
 const app = express();
 
@@ -65,3 +66,23 @@ app.listen(port, () => {
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Hustlr" });
 });
+
+
+
+
+const url = `https://hustlr-be.onrender.com/`;
+const interval = 30000;
+
+//Reloader Function
+function reloadWebsite() {
+  axios.get(url)
+    .then(response => {
+      console.log(`Reloaded at ${new Date().toISOString()}: Status Code ${response.status}`);
+    })
+    .catch(error => {
+      console.error(`Error reloading at ${new Date().toISOString()}:`, error.message);
+    });
+}
+
+setInterval(reloadWebsite, interval);
+
