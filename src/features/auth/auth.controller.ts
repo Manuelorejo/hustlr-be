@@ -12,7 +12,6 @@ import BlacklistRepo from "./blacklist/blacklist.repo";
 import PasswordResetRepo from "./password-reset/reset.repo";
 import sendEmail from "../../services/sendEmail";
 import { passwordResetTemplate } from "../../templates/passwordReset";
-import * as argon2 from "argon2";
 
 export default class AuthController {
   static signup = async (
@@ -29,7 +28,6 @@ export default class AuthController {
         return APIResponse.error(
           "Email already in use",
           409,
-          null,
           "This email is already registered. Try logging in instead."
         ).send(res);
       }
@@ -68,7 +66,6 @@ export default class AuthController {
         return APIResponse.error(
           "User with email does not exist!",
           404,
-          null,
           "No account found with this email. Please check your email or sign up."
         ).send(res);
       }
@@ -79,7 +76,6 @@ export default class AuthController {
         return APIResponse.error(
           "Invalid email or password!",
           400,
-          null,
           "Incorrect email or password. Please try again."
         ).send(res);
       }
