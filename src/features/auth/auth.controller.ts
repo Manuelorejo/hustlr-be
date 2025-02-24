@@ -26,7 +26,12 @@ export default class AuthController {
       // 1️⃣ Check if email already exists
       const existingUser = await AuthRepo.findByEmail(email);
       if (existingUser) {
-        return APIResponse.error("Email already in use", 409).send(res);
+        return APIResponse.error(
+          "Email already in use",
+          409,
+          null,
+          "This email is already registered. Try logging in instead."
+        ).send(res);
       }
 
       // 2️⃣ Create user
@@ -41,7 +46,8 @@ export default class AuthController {
       return APIResponse.success(
         null,
         "User registered successfully",
-        201
+        201,
+        "Your account has been created successfully!"
       ).send(res);
     } catch (error) {
       next(error);
@@ -59,16 +65,24 @@ export default class AuthController {
       // 1️⃣ Find user by email
       const existingUser = await AuthRepo.findByEmail(email);
       if (!existingUser) {
-        return APIResponse.error("User with email does not exist!", 404).send(
-          res
-        );
+        return APIResponse.error(
+          "User with email does not exist!",
+          404,
+          null,
+          "No account found with this email. Please check your email or sign up."
+        ).send(res);
       }
 
       // 2️⃣ Verify password
       const isPasswordValid = await existingUser?.confirmPassword(password);
       console.log("isPasswordValid", isPasswordValid);
       if (!isPasswordValid) {
-        return APIResponse.error("Invalid email or password!", 400).send(res);
+        return APIResponse.error(
+          "Invalid email or password!",
+          400,
+          null,
+          "Incorrect email or password. Please try again."
+        ).send(res);
       }
 
       // 3️⃣ Generate access token
@@ -84,7 +98,8 @@ export default class AuthController {
           email: existingUser.email,
         },
         "Login successful",
-        200
+        200,
+        "Welcome back! You have successfully logged in."
       ).send(res);
     } catch (error) {
       next(error);
@@ -96,19 +111,32 @@ export default class AuthController {
       const token = req.headers.authorization?.split(" ")[1];
 
       if (!token) {
-        return APIResponse.error("No token provided", 400).send(res);
+        return APIResponse.error(
+          "No token provided",
+          400,
+          "Invalid logout attempt. Please try again."
+        ).send(res);
       }
 
       // Check if already blacklisted
       const isBlacklisted = await BlacklistRepo.isTokenBlacklisted(token);
       if (isBlacklisted) {
-        return APIResponse.error("Token already blacklisted", 400).send(res);
+        return APIResponse.error(
+          "Token already blacklisted",
+          400,
+          "You are already logged out."
+        ).send(res);
       }
 
       // Blacklist the token
       await BlacklistRepo.blacklistToken(token);
 
-      return APIResponse.success(null, "Logout successful", 200).send(res);
+      return APIResponse.success(
+        null,
+        "Logout successful",
+        200,
+        "You have been logged out successfully. See you again soon!"
+      ).send(res);
     } catch (error) {
       next(error);
     }
@@ -121,72 +149,83 @@ export default class AuthController {
   ) => {
     try {
       const { email } = req.body;
-
+  
       // 1️⃣ Find user by email
       const existingUser = await AuthRepo.findByEmail(email);
       if (!existingUser) {
-        return APIResponse.error("User with email does not exist!", 404).send(
-          res
-        );
+        return APIResponse.error(
+          "User with email does not exist!",
+          404,
+          "No account found with this email. Please check and try again."
+        ).send(res);
       }
-
+  
       // 2️⃣ Delete existing password reset tokens
       await PasswordResetRepo.deletePasswordResetToken(existingUser._id.toString());
-
+  
       // 3️⃣ Generate reset token
-      const resetToken = await PasswordResetRepo.generatePasswordResetToken(
-        existingUser._id.toString()
-      );
-
+      const resetToken = await PasswordResetRepo.generatePasswordResetToken(existingUser._id.toString());
+  
       // Send email with reset link
       const resetLink = `${process.env.FRONTEND_URL}/password-reset/reset?token=${resetToken}`;
       const emailHtml = passwordResetTemplate(resetLink);
-      await sendEmail(
-        existingUser.email,
-        "Password Reset Request",
-        emailHtml
-      );
+      await sendEmail(existingUser.email, "Password Reset Request", emailHtml);
+      
       return APIResponse.success(
         null,
         "Password reset link sent to email",
-        200
+        200,
+        "We've sent you a password reset link. Check your email inbox."
       ).send(res);
     } catch (error) {
       next(error);
     }
   };
-
   
-  static resetPassword = async (req: Request<{}, {}, PasswordResetInput>, res: Response, next: NextFunction) => {
+
+  static resetPassword = async (
+    req: Request<{}, {}, PasswordResetInput>,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const { token, password } = req.body;
   
       // Find valid token
       const validToken = await PasswordResetRepo.findPasswordResetToken(token);
       if (!validToken) {
-        return APIResponse.error("Invalid or expired token", 400).send(res);
+        return APIResponse.error(
+          "Invalid or expired token",
+          400,
+          "The password reset link is invalid or has expired. Please request a new one."
+        ).send(res);
       }
   
       // Find user
       const user = await AuthRepo.findById(validToken.userId.toString());
       if (!user) {
-        return APIResponse.error("User not found", 404).send(res);
+        return APIResponse.error(
+          "User not found",
+          404,
+          "No account associated with this reset request."
+        ).send(res);
       }
   
       user.password = password;
       await user.save();
-
+  
       // Delete token after successful reset
       await PasswordResetRepo.deletePasswordResetToken(user._id.toString());
   
-  
-      return APIResponse.success(null, "Password reset successful", 200).send(res);
+      return APIResponse.success(
+        null,
+        "Password reset successful",
+        200,
+        "Your password has been reset successfully. You can now log in with your new password."
+      ).send(res);
     } catch (error) {
       next(error);
     }
   };
-  
-  
-  
   
 }

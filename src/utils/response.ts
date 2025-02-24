@@ -7,22 +7,25 @@ class APIResponse<T> {
     private readonly message: string,
     private readonly data?: T,
     private readonly error?: string | Record<string, any> | null,
+    private readonly notification?: string
   ) {}
 
   static success<T>(
     data: T,
     message = "Success",
     statusCode = 200,
+    notification?: string,
   ): APIResponse<T> {
-    return new APIResponse<T>(statusCode, true, message, data);
+    return new APIResponse<T>(statusCode, true, message, data, undefined, notification);
   }
 
   static error(
     message = "Error",
     statusCode = 500,
     error: string | Record<string, any> | null = null,
+    notification?: string,
   ): APIResponse<null> {
-    return new APIResponse<null>(statusCode, false, message, undefined, error);
+    return new APIResponse<null>(statusCode, false, message, undefined, error, notification);
   }
 
   send(res: Response): void {
@@ -32,6 +35,7 @@ class APIResponse<T> {
       message: this.message,
       data: this.data,
       errorType: this.error,
+      notification: this.notification,
     });
   }
 }
