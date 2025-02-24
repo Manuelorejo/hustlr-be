@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
-import express, { Response } from "express";
+import express, {Response} from "express";
 import swaggerJSDoc from "swagger-jsdoc";
 import * as swaggerUi from "swagger-ui-express";
 import morgan from "morgan";
@@ -8,7 +8,6 @@ import connect from "./database/connection";
 import router from "./index.routes";
 import deserialize from "./middleware/deserializeUser";
 import cors from "cors";
-import corsOptions from "../config/cors"; 
 
 const app = express();
 
@@ -25,6 +24,10 @@ const swaggerDefinition = {
       url: "http://localhost:8000",
       description: "Development server",
     },
+    {
+      url: "https://hustlr-be.onrender.com",
+      description:"Production Server"
+    }
   ],
 };
 const options = {
@@ -33,8 +36,18 @@ const options = {
 };
 const swaggerSpec = swaggerJSDoc(options);
 
+var corOptions = {
+  origin: ["http://localhost:5173", "https://hustlr-mu.vercel.app"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+  setHeaders: function (res: Response, path: string, stat: any) {
+    res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
+  },
+};
+
 app.use(express.json());
-app.options("*", cors(corsOptions));
+app.use(cors(corOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("tiny"));
 app.disable("x-powered-by");
