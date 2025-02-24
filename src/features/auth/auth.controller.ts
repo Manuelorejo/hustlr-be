@@ -75,7 +75,6 @@ export default class AuthController {
 
       // 2️⃣ Verify password
       const isPasswordValid = await existingUser?.confirmPassword(password);
-      console.log("isPasswordValid", isPasswordValid);
       if (!isPasswordValid) {
         return APIResponse.error(
           "Invalid email or password!",
@@ -167,7 +166,7 @@ export default class AuthController {
       const resetToken = await PasswordResetRepo.generatePasswordResetToken(existingUser._id.toString());
   
       // Send email with reset link
-      const resetLink = `${process.env.FRONTEND_URL}/password-reset/reset?token=${resetToken}`;
+      const resetLink = `${process.env.FRONTEND_URL}/auth/password-reset/reset?token=${resetToken}`;
       const emailHtml = passwordResetTemplate(resetLink);
       await sendEmail(existingUser.email, "Password Reset Request", emailHtml);
       
