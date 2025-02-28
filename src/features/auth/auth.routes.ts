@@ -11,4 +11,5 @@ authRoutes.post("/login", validate(loginSchema), AuthController.login);
 authRoutes.post("/logout", deserialize, AuthController.logout);
 authRoutes.post("/password-reset/request", validate(passwordResetRequestSchema), AuthController.requestPasswordReset);
 authRoutes.post("/password-reset/reset", validate(passwordResetSchema), AuthController.resetPassword);
+authRoutes.get("/profile",deserialize, AuthController.getProfile);
 export default authRoutes;
