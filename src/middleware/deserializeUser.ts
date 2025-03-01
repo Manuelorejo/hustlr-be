@@ -12,6 +12,7 @@ const deserialize = async (req: Request, res: Response, next: NextFunction) => {
 
     if (!accessToken) return next();
 
+
     // 🔹 Check if token is blacklisted
     const blacklistedToken = await BlacklistModel.findOne({ token: accessToken });
     if (blacklistedToken) {
