@@ -20,6 +20,7 @@ export const privateFields = ["password", "__v"];
 })
 @pre<User>("save", async function () {
   if (!this.isModified("password")) return;
+  console.log("saving new password")
   this.password = await argon2.hash(this.password);
 })
 export class User {

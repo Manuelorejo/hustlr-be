@@ -15,4 +15,5 @@ export default class AuthRepo {
   ): Promise<DocumentType<User>> => {
     return await UserModel.create(user);
   };
+
 }
