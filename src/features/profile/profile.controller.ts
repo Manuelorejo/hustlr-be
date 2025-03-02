@@ -184,7 +184,8 @@ export default class ProfileController {
       return APIResponse.success(
         null,
         "Account deleted successfully",
-        200
+        200,
+        "Account deleted successfully"
       ).send(res);
     } catch (error) {
       next(error);
