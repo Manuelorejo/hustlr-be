@@ -39,7 +39,7 @@ const swaggerSpec = swaggerJSDoc(options);
 
 var corOptions = {
   origin: ["http://localhost:5173", "https://hustlr-mu.vercel.app"],
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
   setHeaders: function (res: Response, path: string, stat: any) {
