@@ -9,8 +9,9 @@
   "scripts": {
     "dev": "set NODE_ENV=development&& ts-node-dev --respawn --transpile-only src/index.ts",
     "stage": "set NODE_ENV=staging&& ts-node-dev --respawn --transpile-only src/index.ts",
-  "build": "npm install --include=dev && tsc && npm run copy-python",
-  "copy-python": "node copy-python.js",
+    "build": "npm install --include=dev && tsc && npm run copy-python && npm run install-python-deps",
+    "copy-python": "node copy-python.js",
+    "install-python-deps": "pip install -r src/features/search/scrapers/requirements.txt",
     "prod": "node build/src/index.js"
   },
   "dependencies": {
