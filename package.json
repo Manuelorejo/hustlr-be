@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "set NODE_ENV=development&& ts-node-dev --respawn --transpile-only src/index.ts",
     "stage": "set NODE_ENV=staging&& ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "npm install --include=dev && tsc",
+  "build": "npm install --include=dev && tsc && npm run copy-python",
+  "copy-python": "node copy-python.js",
     "prod": "node build/src/index.js"
   },
   "dependencies": {
@@ -39,6 +40,7 @@
     "@types/nodemailer": "^6.4.17",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.7",
+    "cpx": "^1.5.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.7.3"

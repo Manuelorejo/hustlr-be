@@ -12,7 +12,6 @@ export default class SearchController {
   ) => {
     try {
       const { title, location } = req.query;
-      console.log
 
       // Resolve the path to the Python script
       const scriptPath = path.join(__dirname, "../search/scrapers");
